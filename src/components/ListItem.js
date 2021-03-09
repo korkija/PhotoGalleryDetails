@@ -4,9 +4,9 @@ import FastImage from 'react-native-fast-image';
 
 // export const ListItem extends React.PureComponent<Props> {
 export const ListItem = ({imageUrl, imageId, openPicture, imageStyle}) => {
-  // const ListItemM = ({imageUrl, imageId, openPicture, imageStyle}) => {
+  // function ListItemM({imageUrl, imageId, openPicture, imageStyle}) {
   // const { imageUrl, imageId, openPicture, imageStyle } = this.props
-  // console.log('00000<<<<< imageUrl', imageUrl);
+  // console.log('00000<<<<< imageId', imageId);
   return (
     <TouchableOpacity onPress={() => openPicture(imageId)} style={styles.item}>
       {/*<Image style={imageStyle} resizeMode="cover" source={{uri: imageUrl}} />*/}

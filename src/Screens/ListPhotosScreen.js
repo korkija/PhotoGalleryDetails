@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef, useCallback} from 'react';
+import React, {useEffect, useState, useRef, useMemo, useCallback} from 'react';
 import {
   FlatList,
   RefreshControl,
@@ -6,6 +6,8 @@ import {
   StyleSheet,
   View,
   StatusBar,
+  Share,
+  Text,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 
@@ -13,18 +15,15 @@ import {ListItem} from '../components/ListItem';
 import {
   getPhotosThunk,
   loadMoreUsersThunk,
-  getToken,
 } from '../redux/store/actions/photoActions';
+import {getToken} from '../redux/store/actions/authActions';
 import {SafeAreaView} from 'react-navigation';
-
-const keyExtractor = (item, page) => item.id.toString() + page;
+import {keyExtractor} from './helpers/index';
 
 export const ListPhotosScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const [refresh, setRefresh] = useState(false);
-  const {tokenIsLoading, page, pictures, pageCount} = useSelector(
-    (state) => state.photoAPI,
-  );
+  const {page, pictures, pageCount} = useSelector((state) => state.photoAPI);
 
   const loadNewData = useRef(true);
   const [
@@ -33,16 +32,18 @@ export const ListPhotosScreen = ({navigation}) => {
   ] = useState();
 
   useEffect(() => {
+    console.log('<><><><>========');
     prepareStyles();
     (async () => {
       await dispatch(getToken());
-      if (!tokenIsLoading) {
-        await dispatch(getPhotosThunk());
-      }
+      // if (!tokenIsLoading) {
+      await dispatch(getPhotosThunk());
+      // }
     })();
   }, []);
 
-  const loadMore = async () => {
+  const loadMore = useCallback(async () => {
+    console.log('******loadMore******');
     if (loadNewData.current) {
       if (page < pageCount) {
         loadNewData.current = false;
@@ -50,9 +51,11 @@ export const ListPhotosScreen = ({navigation}) => {
         loadNewData.current = true;
       }
     }
-  };
+  }, [page, pageCount]);
 
+  console.log('******RERENDER******');
   const prepareStyles = () => {
+    console.log('******prepareStyles******');
     const {height, width} = Dimensions.get('window');
     const realWidth = height > width ? width : height;
     const portraitImageSize = realWidth / 2 - 10;
@@ -63,19 +66,30 @@ export const ListPhotosScreen = ({navigation}) => {
       }),
     );
   };
+  // const onShare = useCallback(async (urlCropp, urlFull) => {
+  //   try {
+  //     const result = await Share.share({
+  //       message: `cropp ${urlCropp} full ${urlFull}`,
+  //     });
+  //   } catch (error) {
+  //     alert(error.message);
+  //   }
+  // }, []);
 
-  const openPicture = (imageId, index) => {
-    navigation.navigate('ModalGalleryScreen', {
-      pictureDetails: pictures.find((pic) => pic.id === imageId.toString()),
-      indexPhoto: index,
-    });
-  };
+  const openPicture = useCallback(
+    (imageId, index) => {
+      navigation.navigate('ModalGalleryScreen', {
+        pictureDetails: pictures.find((pic) => pic.id === imageId.toString()),
+        indexPhoto: index,
+      });
+    },
+    [pictures],
+  );
 
   const renderPicture = useCallback(
     (picture) => {
       const imageURL = picture.item.cropped_picture;
       const imageId = picture.item.id;
-      // console.log('WWWWW', picture.item);
       return (
         <ListItem
           imageUrl={imageURL}
@@ -90,11 +104,11 @@ export const ListPhotosScreen = ({navigation}) => {
     [pictures],
   );
 
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setRefresh(true);
     await dispatch(getPhotosThunk());
     setRefresh(false);
-  };
+  }, []);
 
   return (
     <View style={styles.page}>
@@ -103,21 +117,14 @@ export const ListPhotosScreen = ({navigation}) => {
         <FlatList
           onEndReached={loadMore}
           onEndReachedThreshold={1}
-          // removeClippedSubviews
+          removeClippedSubviews
           refreshing={false}
-          // initialNumToRender={20}
+          initialNumToRender={5}
+          onRefresh={onRefresh}
           data={pictures}
-          refreshControl={
-            <RefreshControl
-              onRefresh={onRefresh}
-              refreshing={refresh}
-              colors={['#fa6f44']}
-              tintColor="#f28e26"
-            />
-          }
           numColumns={2}
           renderItem={renderPicture}
-          keyExtractor={(item, index) => keyExtractor(item, index)}
+          keyExtractor={keyExtractor}
           onEndThreshold={2}
         />
       </SafeAreaView>

@@ -2,18 +2,19 @@ import produce from 'immer';
 import {
   GET_PHOTOS,
   LOAD_MORE_PHOTOS,
-  GET_TOKEN,
+  // GET_TOKEN,
   IS_LOADING,
-  GET_TOKEN_IS_LOADING,
+  // GET_TOKEN_IS_LOADING,
   LOAD_DETAILS_PHOTO,
 } from '../constants';
 
 const initialState = {
   pictures: [],
+  picturesDetails: [],
   page: 1,
   pageCount: null,
-  token: '',
-  tokenIsLoading: false,
+  // token: '',
+  // tokenIsLoading: false,
   isLoading: false,
 };
 
@@ -24,6 +25,7 @@ export const photoReducer = (state = initialState, action) => {
       return {
         ...state,
         pictures: action.pictures,
+        picturesDetails: action.pictures,
         page: action.page,
         pageCount: action.pageCount,
         isLoading: false,
@@ -33,28 +35,21 @@ export const photoReducer = (state = initialState, action) => {
       return {
         ...state,
         pictures: [...state.pictures, ...action.pictures],
+        picturesDetails: [...state.picturesDetails, ...action.pictures],
         page: action.page,
         pageCount: action.pageCount,
         isLoading: false,
       };
-    case GET_TOKEN:
-      return {
-        ...state,
-        token: action.token,
-      };
-    case GET_TOKEN_IS_LOADING:
-      return {
-        ...state,
-        tokenIsLoading: action.tokenIsLoading,
-      };
+
     case IS_LOADING:
       return {
         ...state,
         isLoading: action.isLoading,
       };
     case LOAD_DETAILS_PHOTO:
+      console.log('<<<<<<0000');
       return produce(state, (draftState) => {
-        draftState.pictures[action.indexPhoto].details = action.details;
+        draftState.picturesDetails[action.indexPhoto].details = action.details;
       });
     default:
       return state;
