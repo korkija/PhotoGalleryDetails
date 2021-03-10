@@ -2,14 +2,9 @@ import * as React from 'react';
 import {TouchableOpacity, StyleSheet} from 'react-native';
 import FastImage from 'react-native-fast-image';
 
-// export const ListItem extends React.PureComponent<Props> {
-export const ListItem = ({imageUrl, imageId, openPicture, imageStyle}) => {
-  // function ListItemM({imageUrl, imageId, openPicture, imageStyle}) {
-  // const { imageUrl, imageId, openPicture, imageStyle } = this.props
-  // console.log('00000<<<<< imageId', imageId);
+const ListItemM = ({imageUrl, imageId, openPicture, imageStyle}) => {
   return (
     <TouchableOpacity onPress={() => openPicture(imageId)} style={styles.item}>
-      {/*<Image style={imageStyle} resizeMode="cover" source={{uri: imageUrl}} />*/}
       <FastImage
         resizeMode={FastImage.resizeMode.cover}
         style={imageStyle}
@@ -19,7 +14,7 @@ export const ListItem = ({imageUrl, imageId, openPicture, imageStyle}) => {
   );
 };
 
-// export const ListItem = React.memo(ListItemM);
+export const ListItem = React.memo(ListItemM);
 
 const styles: any = StyleSheet.create({
   page: {
@@ -29,8 +24,6 @@ const styles: any = StyleSheet.create({
   },
   image: {
     flex: 1,
-
-    // width:,
     backgroundColor: 'black',
   },
   errorContainer: {

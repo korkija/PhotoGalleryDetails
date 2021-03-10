@@ -1,14 +1,5 @@
-import React, {useEffect, useState, useRef, useMemo, useCallback} from 'react';
-import {
-  FlatList,
-  RefreshControl,
-  Dimensions,
-  StyleSheet,
-  View,
-  StatusBar,
-  Share,
-  Text,
-} from 'react-native';
+import React, {useEffect, useState, useRef, useCallback} from 'react';
+import {FlatList, Dimensions, StyleSheet, View, StatusBar} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 
 import {ListItem} from '../components/ListItem';
@@ -19,11 +10,14 @@ import {
 import {getToken} from '../redux/store/actions/authActions';
 import {SafeAreaView} from 'react-navigation';
 import {keyExtractor} from './helpers/index';
+import {ErrorBlock} from '../components/ErrorBlock';
+
+const {height, width} = Dimensions.get('window');
 
 export const ListPhotosScreen = ({navigation}) => {
   const dispatch = useDispatch();
-  const [refresh, setRefresh] = useState(false);
   const {page, pictures, pageCount} = useSelector((state) => state.photoAPI);
+  const {token, error: errorToken} = useSelector((state) => state.authAPI);
 
   const loadNewData = useRef(true);
   const [
@@ -32,18 +26,24 @@ export const ListPhotosScreen = ({navigation}) => {
   ] = useState();
 
   useEffect(() => {
-    console.log('<><><><>========');
     prepareStyles();
     (async () => {
       await dispatch(getToken());
-      // if (!tokenIsLoading) {
-      await dispatch(getPhotosThunk());
-      // }
     })();
   }, []);
+  console.log('<<<<<<', pictures);
+  console.log('<<<<<< errorToken', errorToken);
+  console.log('<<<<<< token', token);
+  useEffect(() => {
+    if (errorToken !== false && !!token) {
+      (async () => {
+        // await dispatch(loadMoreUsersThunk(-1));
+        await dispatch(getPhotosThunk());
+      })();
+    }
+  }, [errorToken, token]);
 
   const loadMore = useCallback(async () => {
-    console.log('******loadMore******');
     if (loadNewData.current) {
       if (page < pageCount) {
         loadNewData.current = false;
@@ -53,10 +53,7 @@ export const ListPhotosScreen = ({navigation}) => {
     }
   }, [page, pageCount]);
 
-  console.log('******RERENDER******');
-  const prepareStyles = () => {
-    console.log('******prepareStyles******');
-    const {height, width} = Dimensions.get('window');
+  const prepareStyles = useCallback(() => {
     const realWidth = height > width ? width : height;
     const portraitImageSize = realWidth / 2 - 10;
     setImageThumbnailStylePortrait(
@@ -65,20 +62,11 @@ export const ListPhotosScreen = ({navigation}) => {
         height: portraitImageSize,
       }),
     );
-  };
-  // const onShare = useCallback(async (urlCropp, urlFull) => {
-  //   try {
-  //     const result = await Share.share({
-  //       message: `cropp ${urlCropp} full ${urlFull}`,
-  //     });
-  //   } catch (error) {
-  //     alert(error.message);
-  //   }
-  // }, []);
+  }, [width]);
 
   const openPicture = useCallback(
     (imageId, index) => {
-      navigation.navigate('ModalGalleryScreen', {
+      navigation.navigate('GalleryScreen', {
         pictureDetails: pictures.find((pic) => pic.id === imageId.toString()),
         indexPhoto: index,
       });
@@ -88,11 +76,10 @@ export const ListPhotosScreen = ({navigation}) => {
 
   const renderPicture = useCallback(
     (picture) => {
-      const imageURL = picture.item.cropped_picture;
       const imageId = picture.item.id;
       return (
         <ListItem
-          imageUrl={imageURL}
+          imageUrl={picture.item.cropped_picture}
           imageId={imageId}
           imageStyle={imageThumbnailStylePortrait}
           openPicture={() => {
@@ -105,14 +92,12 @@ export const ListPhotosScreen = ({navigation}) => {
   );
 
   const onRefresh = useCallback(async () => {
-    setRefresh(true);
     await dispatch(getPhotosThunk());
-    setRefresh(false);
   }, []);
 
   return (
     <View style={styles.page}>
-      <StatusBar barStyle="light-content" />
+      <StatusBar backgroundColor="#000" barStyle="light-content" />
       <SafeAreaView style={{flex: 1}}>
         <FlatList
           onEndReached={loadMore}
@@ -125,9 +110,10 @@ export const ListPhotosScreen = ({navigation}) => {
           numColumns={2}
           renderItem={renderPicture}
           keyExtractor={keyExtractor}
-          onEndThreshold={2}
+          onEndThreshold={4}
         />
       </SafeAreaView>
+      {!!errorToken && <ErrorBlock errorMessage={errorToken} />}
     </View>
   );
 };

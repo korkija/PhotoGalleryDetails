@@ -31,30 +31,14 @@ export async function getAuth() {
 }
 export async function getPictures(page = 1) {
   const endpoint = `${ENDPOINT}/images?page=${page}`;
-  let response = {
-    error: null,
-    data: null,
-  };
-  try {
-    const apiResponse = await fetch(endpoint, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    if (apiResponse.ok) {
-      const apiResponseData = await apiResponse.json();
-      response.data = apiResponseData;
-    }
-  } catch (error) {
-    response.error = error;
-  }
-  return response;
+  return await requestGet(endpoint);
 }
 
 export async function getPictureDetails(id) {
   const endpoint = `${ENDPOINT}/images/${id}`;
+  return await requestGet(endpoint);
+}
+async function requestGet(endpoint) {
   let response = {
     error: null,
     data: null,
@@ -70,6 +54,8 @@ export async function getPictureDetails(id) {
     if (apiResponse.ok) {
       const apiResponseData = await apiResponse.json();
       response.data = apiResponseData;
+    } else {
+      response.error = {message: apiResponse.status};
     }
   } catch (error) {
     response.error = error;

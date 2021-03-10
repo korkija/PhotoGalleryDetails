@@ -1,8 +1,8 @@
-import {GET_TOKEN, GET_TOKEN_IS_LOADING} from '../constants';
+import {GET_TOKEN, SET_ERROR} from '../constants';
 
 const initialState = {
   token: '',
-  tokenIsLoading: false,
+  error: '',
 };
 
 export const authReducer = (state = initialState, action) => {
@@ -11,13 +11,13 @@ export const authReducer = (state = initialState, action) => {
       return {
         ...state,
         token: action.token,
+        error: action.error,
       };
-    case GET_TOKEN_IS_LOADING:
+    case SET_ERROR:
       return {
         ...state,
-        tokenIsLoading: action.tokenIsLoading,
+        error: action.error,
       };
-
     default:
       return state;
   }

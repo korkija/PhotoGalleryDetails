@@ -15,7 +15,7 @@ const reducers = combineReducers({
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whiteList: ['mainAPI'],
+  blacklist: ['authAPI'],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);

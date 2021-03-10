@@ -2,31 +2,25 @@ import {getPictures, getPictureDetails} from '../../../api/api';
 import {
   GET_PHOTOS,
   LOAD_MORE_PHOTOS,
-  // GET_TOKEN,
-  // GET_TOKEN_IS_LOADING,
   IS_LOADING,
   LOAD_DETAILS_PHOTO,
+  SET_ERROR,
 } from '../constants';
 
-// export const getToken = () => async (dispatch) => {
-//   try {
-//     dispatch({
-//       type: GET_TOKEN_IS_LOADING,
-//       tokenIsLoading: true,
-//     });
-//     const response = await getAuth();
-//     dispatch({
-//       type: GET_TOKEN,
-//       token: response.data.token,
-//     });
-//     dispatch({
-//       type: GET_TOKEN_IS_LOADING,
-//       tokenIsLoading: false,
-//     });
-//   } catch (e) {
-//     //console.log('getUsersThunk', e);
-//   }
-// };
+export const setError = (errorText) => {
+  return {
+    type: SET_ERROR,
+    error: errorText,
+  };
+};
+
+const setErrorAndLoading = (errorText) => (dispatch) => {
+  dispatch({
+    type: IS_LOADING,
+    isLoading: false,
+  });
+  dispatch(setError(errorText));
+};
 
 export const getPhotosThunk = () => async (dispatch) => {
   try {
@@ -43,13 +37,10 @@ export const getPhotosThunk = () => async (dispatch) => {
         pageCount: response.data.pageCount,
       });
     } else {
-      dispatch({
-        type: IS_LOADING,
-        isLoading: false,
-      });
+      dispatch(setErrorAndLoading(response.error.message));
     }
   } catch (e) {
-    //console.log('getUsersThunk', e);
+    dispatch(setError('Error with getting Photos'));
   }
 };
 
@@ -60,7 +51,6 @@ export const loadMoreUsersThunk = (page) => async (dispatch) => {
       isLoading: true,
     });
     const response = await getPictures(page + 1);
-    console.log('<<loadMoreUsersThunk', response);
     if (response.data) {
       dispatch({
         type: LOAD_MORE_PHOTOS,
@@ -69,32 +59,32 @@ export const loadMoreUsersThunk = (page) => async (dispatch) => {
         pageCount: response.data.pageCount,
       });
     } else {
-      dispatch({
-        type: IS_LOADING,
-        isLoading: false,
-      });
+      dispatch(setErrorAndLoading(response.error.message));
     }
   } catch (e) {
-    //console.log('getUsersThunk', e);
+    dispatch(setError('Error with getting More photos'));
   }
 };
+
 export const getPhotoDetailsThunk = (id) => async (dispatch, getState) => {
   try {
-    console.log('getPhotoDetailsThunk');
-    const pictures = getState().photoAPI.pictures;
+    const {pictures, picturesDetails} = getState().photoAPI;
     const index = pictures.findIndex((item) => {
       return item.id === id;
     });
-    console.log('getPhotoDetailsThunk');
-    const response = await getPictureDetails(id);
-    if (response.data) {
-      dispatch({
-        type: LOAD_DETAILS_PHOTO,
-        indexPhoto: index,
-        details: response.data,
-      });
+    if (!picturesDetails[index].details) {
+      const response = await getPictureDetails(id);
+      if (response.data) {
+        dispatch({
+          type: LOAD_DETAILS_PHOTO,
+          indexPhoto: index,
+          details: response.data,
+        });
+      } else {
+        dispatch(setError(response.error?.message));
+      }
     }
   } catch (e) {
-    //console.log('getUsersThunk', e);
+    dispatch(setError('Error with getting photo Details'));
   }
 };

@@ -5,25 +5,31 @@ import {ListPhotosScreen} from './Screens/ListPhotosScreen';
 import {DetailsPhotoScreen} from './Screens/DetailsPhotoScreen';
 const RootStack = createStackNavigator();
 
+const optionsGalleryScreen = {
+  headerTitle: null,
+  headerStyle: {
+    backgroundColor: '#000',
+    shadowRadius: 0,
+    shadowOffset: {
+      height: 0,
+    },
+  },
+  headerTintColor: '#fff',
+};
+
 const RootStackNavigator = () => {
   return (
     <RootStack.Navigator
-      screenOptions={{cardStyle: {backgroundColor: 'transparent'}}}>
+      screenOptions={{cardStyle: {backgroundColor: 'black'}}}>
       <RootStack.Screen
         name="Main"
         component={ListPhotosScreen}
         options={{headerShown: false}}
       />
       <RootStack.Screen
-        name="ModalGalleryScreen"
+        name="GalleryScreen"
         component={DetailsPhotoScreen}
-        options={{
-          headerTitle: null,
-          headerStyle: {
-            backgroundColor: '#000',
-          },
-          headerTintColor: '#fff',
-        }}
+        options={optionsGalleryScreen}
       />
     </RootStack.Navigator>
   );

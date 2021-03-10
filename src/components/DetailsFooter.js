@@ -2,14 +2,11 @@ import * as React from 'react';
 import {TouchableOpacity, Image, View, StyleSheet, Text} from 'react-native';
 import shareImage from '../../assets/images/ShareThis.png';
 
-const DetailsFooterM = ({pictureUrls, shareCallback, details}) => {
-  if (!pictureUrls) return null;
+const DetailsFooterM = ({shareCallback, details}) => {
   return (
     <>
       <View style={styles.detailView}>
-        <TouchableOpacity
-          style={{alignSelf: 'flex-end'}}
-          onPress={shareCallback}>
+        <TouchableOpacity style={styles.touchableBlock} onPress={shareCallback}>
           <Image
             style={styles.detailViewImage}
             resizeMode="cover"
@@ -18,9 +15,9 @@ const DetailsFooterM = ({pictureUrls, shareCallback, details}) => {
         </TouchableOpacity>
       </View>
       {!!details && (
-        <View style={{position: 'absolute', bottom: 50, left: 30}}>
-          <Text style={{color: '#fff'}}>{details.author}</Text>
-          <Text style={{color: '#fff'}}>{details.camera}</Text>
+        <View style={styles.detailViewText}>
+          <Text style={styles.text}>{details.author}</Text>
+          <Text style={styles.text}>{details.camera}</Text>
         </View>
       )}
     </>
@@ -41,4 +38,11 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
   },
+  touchableBlock: {
+    alignSelf: 'flex-end',
+  },
+  text: {
+    color: '#fff',
+  },
+  detailViewText: {position: 'absolute', bottom: 50, left: 30},
 });
