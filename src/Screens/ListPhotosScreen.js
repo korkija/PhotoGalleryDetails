@@ -1,5 +1,6 @@
 import React, {useEffect, useState, useRef, useCallback} from 'react';
 import {FlatList, Dimensions, StyleSheet, View, StatusBar} from 'react-native';
+
 import {useDispatch, useSelector} from 'react-redux';
 
 import {ListItem} from '../components/ListItem';
@@ -31,9 +32,7 @@ export const ListPhotosScreen = ({navigation}) => {
       await dispatch(getToken());
     })();
   }, []);
-  console.log('<<<<<<', pictures);
-  console.log('<<<<<< errorToken', errorToken);
-  console.log('<<<<<< token', token);
+
   useEffect(() => {
     if (errorToken !== false && !!token) {
       (async () => {
