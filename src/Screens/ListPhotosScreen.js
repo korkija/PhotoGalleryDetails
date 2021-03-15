@@ -1,8 +1,6 @@
-import React, {useEffect, useState, useRef, useCallback} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {FlatList, Dimensions, StyleSheet, View, StatusBar} from 'react-native';
-
 import {useDispatch, useSelector} from 'react-redux';
-
 import {ListItem} from '../components/ListItem';
 import {
   getPhotosThunk,
@@ -20,7 +18,6 @@ export const ListPhotosScreen = ({navigation}) => {
   const {page, pictures, pageCount} = useSelector((state) => state.photoAPI);
   const {token, error: errorToken} = useSelector((state) => state.authAPI);
 
-  const loadNewData = useRef(true);
   const [
     imageThumbnailStylePortrait,
     setImageThumbnailStylePortrait,
@@ -43,12 +40,8 @@ export const ListPhotosScreen = ({navigation}) => {
   }, [errorToken, token]);
 
   const loadMore = useCallback(async () => {
-    if (loadNewData.current) {
-      if (page < pageCount) {
-        loadNewData.current = false;
-        await dispatch(loadMoreUsersThunk(page));
-        loadNewData.current = true;
-      }
+    if (page < pageCount) {
+      await dispatch(loadMoreUsersThunk(page));
     }
   }, [page, pageCount]);
 
