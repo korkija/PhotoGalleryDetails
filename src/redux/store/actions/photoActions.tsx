@@ -1,20 +1,26 @@
 import {getPictures, getPictureDetails} from '../../../api/api';
+import {action1Type} from '../reducers/authReducer';
+import {Dispatch} from 'redux';
+
 import {
   GET_PHOTOS,
   LOAD_MORE_PHOTOS,
   IS_LOADING,
   LOAD_DETAILS_PHOTO,
   SET_ERROR,
+  GET_TOKEN,
 } from '../constants';
 
-export const setError = (errorText) => {
+export const setError = (errorText: string): action1Type => {
   return {
     type: SET_ERROR,
     error: errorText,
   };
 };
 
-const setErrorAndLoading = (errorText) => (dispatch) => {
+const setErrorAndLoading = (errorText: string) => (
+  dispatch: Dispatch,
+): void => {
   dispatch({
     type: IS_LOADING,
     isLoading: false,
@@ -22,7 +28,7 @@ const setErrorAndLoading = (errorText) => (dispatch) => {
   dispatch(setError(errorText));
 };
 
-export const getPhotosThunk = () => async (dispatch) => {
+export const getPhotosThunk = () => async (dispatch: Dispatch<any>) => {
   try {
     dispatch({
       type: IS_LOADING,
@@ -44,7 +50,9 @@ export const getPhotosThunk = () => async (dispatch) => {
   }
 };
 
-export const loadMoreUsersThunk = (page) => async (dispatch) => {
+export const loadMoreUsersThunk = (page: number) => async (
+  dispatch: Dispatch<any>,
+) => {
   try {
     dispatch({
       type: IS_LOADING,
@@ -66,7 +74,10 @@ export const loadMoreUsersThunk = (page) => async (dispatch) => {
   }
 };
 
-export const getPhotoDetailsThunk = (id) => async (dispatch, getState) => {
+export const getPhotoDetailsThunk = (id: number) => async (
+  dispatch: Dispatch,
+  getState,
+) => {
   try {
     const {pictures, picturesDetails} = getState().photoAPI;
     const index = pictures.findIndex((item) => {

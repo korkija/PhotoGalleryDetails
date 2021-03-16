@@ -12,6 +12,25 @@ const initDataPost = {
   }),
 };
 
+type objectType = {};
+type dataType = {
+  pictures: any;
+  page: number;
+  pageCount: number;
+};
+type errorType = {
+  message: string;
+};
+export type requestPhotosType =
+  | {
+      data: dataType;
+      error: objectType;
+    }
+  | {
+      data: objectType;
+      error: errorType;
+    };
+
 export async function getAuth() {
   const endpoint = ENDPOINT + '/auth';
   let response = {
@@ -38,7 +57,7 @@ export async function getPictureDetails(id) {
   const endpoint = `${ENDPOINT}/images/${id}`;
   return await requestGet(endpoint);
 }
-async function requestGet(endpoint) {
+async function requestGet(endpoint: string): Promise<requestPhotosType> {
   let response = {
     error: null,
     data: null,
