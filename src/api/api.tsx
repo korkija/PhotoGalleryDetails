@@ -12,7 +12,6 @@ const initDataPost = {
   }),
 };
 
-type objectNullType = {};
 type dataAuthType = {
   auth: boolean;
   token: string;
@@ -25,36 +24,27 @@ type dataType = {
 type errorType = {
   message: string;
 };
-export type requestPhotosType =
-  | {
-      data: dataType | dataAuthType;
-      error: objectNullType;
-    }
-  | {
-      data: objectNullType;
-      error: errorType;
-    }
-  | {
-      data: objectNullType;
-      error: objectNullType;
-    };
+export type requestAuthType = {
+  data?: dataAuthType;
+  error?: errorType;
+};
 
-export async function getAuth(): Promise<requestPhotosType> {
+export type requestPhotosType = {
+  data?: dataType;
+  error?: errorType;
+};
+
+export async function getAuth(): Promise<requestAuthType> {
   const endpoint = ENDPOINT + '/auth';
-  let response: requestPhotosType = {
-    error: {},
-    data: {},
-  };
   try {
     const apiResponse = await fetch(endpoint, initDataPost);
     const apiResponseData = await apiResponse.json();
     token = apiResponseData.token;
     await AsyncStorage.setItem('@token', token);
-    response.data = apiResponseData;
+    return {data: apiResponseData};
   } catch (error) {
-    response.error = error;
+    return {error};
   }
-  return response;
 }
 export async function getPictures(
   page: number = 1,
@@ -70,10 +60,6 @@ export async function getPictureDetails(
   return await requestGet(endpoint);
 }
 async function requestGet(endpoint: string): Promise<requestPhotosType> {
-  let response: requestPhotosType = {
-    error: {},
-    data: {},
-  };
   try {
     const apiResponse = await fetch(endpoint, {
       method: 'GET',
@@ -83,14 +69,11 @@ async function requestGet(endpoint: string): Promise<requestPhotosType> {
       },
     });
     if (apiResponse.ok) {
-      // const apiResponseData = await apiResponse.json();
-      response.data = await apiResponse.json();
-      // response.data = apiResponseData;
+      return {data: await apiResponse.json()};
     } else {
-      response.error = {message: apiResponse.status};
+      return {error: {message: apiResponse.status.toString()}};
     }
   } catch (error) {
-    response.error = error;
+    return {error: {message: error}};
   }
-  return response;
 }

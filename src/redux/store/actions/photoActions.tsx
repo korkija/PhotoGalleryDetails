@@ -9,6 +9,7 @@ import {
   LOAD_DETAILS_PHOTO,
   SET_ERROR,
 } from '../constants';
+import {pictureItem} from '~/redux/store/reducers/photoReducer';
 
 export const setError = (errorText: string): actionErrorType => {
   return {
@@ -34,15 +35,14 @@ export const getPhotosThunk = () => async (dispatch: Dispatch<any>) => {
       isLoading: true,
     });
     const response = await getPictures();
-    if (Object.keys(response.data).length !== 0) {
-      // if (response.data) {
+    if (response.data) {
       dispatch({
         type: GET_PHOTOS,
         pictures: response.data.pictures,
         page: response.data.page,
         pageCount: response.data.pageCount,
       });
-    } else {
+    } else if (response.error) {
       dispatch(setErrorAndLoading(response.error.message));
     }
   } catch (e) {
@@ -59,15 +59,14 @@ export const loadMoreUsersThunk = (page: number) => async (
       isLoading: true,
     });
     const response = await getPictures(page + 1);
-    if (Object.keys(response.data).length !== 0) {
-      // if (response.data) {
+    if (response.data) {
       dispatch({
         type: LOAD_MORE_PHOTOS,
         pictures: response.data.pictures,
         page: response.data.page,
         pageCount: response.data.pageCount,
       });
-    } else {
+    } else if (response.error) {
       dispatch(setErrorAndLoading(response.error.message));
     }
   } catch (e) {
@@ -77,23 +76,22 @@ export const loadMoreUsersThunk = (page: number) => async (
 
 export const getPhotoDetailsThunk = (id: number) => async (
   dispatch: Dispatch,
-  getState,
+  getState: Function,
 ) => {
   try {
     const {pictures, picturesDetails} = getState().photoAPI;
-    const index = pictures.findIndex((item) => {
-      return item.id === id;
+    const index = pictures.findIndex((item: pictureItem) => {
+      return item.id === id.toString();
     });
     if (!picturesDetails[index].details) {
       const response = await getPictureDetails(id);
-      if (Object.keys(response.data).length !== 0) {
-        // if (response.data) {
+      if (response.data) {
         dispatch({
           type: LOAD_DETAILS_PHOTO,
           indexPhoto: index,
           details: response.data,
         });
-      } else {
+      } else if (response.error) {
         dispatch(setError(response.error?.message));
       }
     }

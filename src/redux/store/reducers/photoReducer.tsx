@@ -6,7 +6,7 @@ import {
   LOAD_DETAILS_PHOTO,
 } from '../constants';
 
-type pictureItem = {
+export type pictureItem = {
   id: string;
   cropped_picture: string;
 };
