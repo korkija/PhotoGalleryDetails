@@ -1,5 +1,5 @@
 import {getPictures, getPictureDetails} from '../../../api/api';
-import {action1Type} from '../reducers/authReducer';
+import {actionErrorType} from '../reducers/authReducer';
 import {Dispatch} from 'redux';
 
 import {
@@ -8,10 +8,9 @@ import {
   IS_LOADING,
   LOAD_DETAILS_PHOTO,
   SET_ERROR,
-  GET_TOKEN,
 } from '../constants';
 
-export const setError = (errorText: string): action1Type => {
+export const setError = (errorText: string): actionErrorType => {
   return {
     type: SET_ERROR,
     error: errorText,
@@ -35,7 +34,8 @@ export const getPhotosThunk = () => async (dispatch: Dispatch<any>) => {
       isLoading: true,
     });
     const response = await getPictures();
-    if (response.data) {
+    if (Object.keys(response.data).length !== 0) {
+      // if (response.data) {
       dispatch({
         type: GET_PHOTOS,
         pictures: response.data.pictures,
@@ -59,7 +59,8 @@ export const loadMoreUsersThunk = (page: number) => async (
       isLoading: true,
     });
     const response = await getPictures(page + 1);
-    if (response.data) {
+    if (Object.keys(response.data).length !== 0) {
+      // if (response.data) {
       dispatch({
         type: LOAD_MORE_PHOTOS,
         pictures: response.data.pictures,
@@ -85,7 +86,8 @@ export const getPhotoDetailsThunk = (id: number) => async (
     });
     if (!picturesDetails[index].details) {
       const response = await getPictureDetails(id);
-      if (response.data) {
+      if (Object.keys(response.data).length !== 0) {
+        // if (response.data) {
         dispatch({
           type: LOAD_DETAILS_PHOTO,
           indexPhoto: index,

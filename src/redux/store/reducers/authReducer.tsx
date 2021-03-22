@@ -5,17 +5,17 @@ type initialStateType = {
   error: string;
 };
 
-export type action1Type = {
+export type actionErrorType = {
   type: typeof SET_ERROR;
   error: string;
 };
-export type action2Type = {
+export type actionTokenType = {
   type: typeof GET_TOKEN;
   token: string;
   error: string;
 };
 
-export type actionsAuthType = action1Type | action2Type;
+export type actionsAuthType = actionTokenType | actionErrorType;
 
 const initialState: initialStateType = {
   token: '',

@@ -12,7 +12,11 @@ const initDataPost = {
   }),
 };
 
-type objectType = {};
+type objectNullType = {};
+type dataAuthType = {
+  auth: boolean;
+  token: string;
+};
 type dataType = {
   pictures: any;
   page: number;
@@ -23,19 +27,23 @@ type errorType = {
 };
 export type requestPhotosType =
   | {
-      data: dataType;
-      error: objectType;
+      data: dataType | dataAuthType;
+      error: objectNullType;
     }
   | {
-      data: objectType;
+      data: objectNullType;
       error: errorType;
+    }
+  | {
+      data: objectNullType;
+      error: objectNullType;
     };
 
-export async function getAuth() {
+export async function getAuth(): Promise<requestPhotosType> {
   const endpoint = ENDPOINT + '/auth';
-  let response = {
-    error: null,
-    data: null,
+  let response: requestPhotosType = {
+    error: {},
+    data: {},
   };
   try {
     const apiResponse = await fetch(endpoint, initDataPost);
@@ -48,19 +56,23 @@ export async function getAuth() {
   }
   return response;
 }
-export async function getPictures(page = 1) {
+export async function getPictures(
+  page: number = 1,
+): Promise<requestPhotosType> {
   const endpoint = `${ENDPOINT}/images?page=${page}`;
   return await requestGet(endpoint);
 }
 
-export async function getPictureDetails(id) {
+export async function getPictureDetails(
+  id: number,
+): Promise<requestPhotosType> {
   const endpoint = `${ENDPOINT}/images/${id}`;
   return await requestGet(endpoint);
 }
 async function requestGet(endpoint: string): Promise<requestPhotosType> {
-  let response = {
-    error: null,
-    data: null,
+  let response: requestPhotosType = {
+    error: {},
+    data: {},
   };
   try {
     const apiResponse = await fetch(endpoint, {
@@ -71,8 +83,9 @@ async function requestGet(endpoint: string): Promise<requestPhotosType> {
       },
     });
     if (apiResponse.ok) {
-      const apiResponseData = await apiResponse.json();
-      response.data = apiResponseData;
+      // const apiResponseData = await apiResponse.json();
+      response.data = await apiResponse.json();
+      // response.data = apiResponseData;
     } else {
       response.error = {message: apiResponse.status};
     }
