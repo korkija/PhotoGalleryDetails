@@ -1,6 +1,7 @@
 import React, {useCallback} from 'react';
 import {View, StyleSheet, Dimensions, Share, FlatList} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {getPhotoDetailsThunk} from '../redux/store/actions/photoActions';
 import {keyExtractor} from './helpers/index';
 import {DetailsItem} from '../components/DetailsItem';
@@ -10,6 +11,7 @@ const {width} = Dimensions.get('window');
 
 const DetailsPhotoScreenM = ({route}) => {
   const {indexPhoto} = route.params;
+  const insets = useSafeAreaInsets();
   const dispatch = useDispatch();
   const {error: errorToken} = useSelector((state) => state.authAPI);
   const pictures = useSelector((state) => state.photoAPI.pictures);
@@ -27,7 +29,12 @@ const DetailsPhotoScreenM = ({route}) => {
   const renderItem = useCallback(
     ({item, index}) => {
       return (
-        <DetailsItem picture={item} indexPhoto={index} onShare={onShare} />
+        <DetailsItem
+          picture={item}
+          indexPhoto={index}
+          safeArea={insets}
+          onShare={onShare}
+        />
       );
     },
     [pictures],

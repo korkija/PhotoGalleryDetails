@@ -54,7 +54,7 @@ export const ListPhotosScreen = ({navigation}) => {
 
   const prepareStyles = useCallback(() => {
     const realWidth = height > width ? width : height;
-    const portraitImageSize = realWidth / 2 - 10;
+    const portraitImageSize = realWidth / 2 - 5;
     setImageThumbnailStylePortrait(
       StyleSheet.flatten({
         width: portraitImageSize,
@@ -105,6 +105,7 @@ export const ListPhotosScreen = ({navigation}) => {
           refreshing={false}
           initialNumToRender={5}
           onRefresh={onRefresh}
+          style={{paddingHorizontal: 5}}
           data={pictures}
           numColumns={2}
           renderItem={renderPicture}

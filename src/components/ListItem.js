@@ -4,7 +4,7 @@ import FastImage from 'react-native-fast-image';
 
 const ListItemM = ({imageUrl, imageId, openPicture, imageStyle}) => {
   return (
-    <TouchableOpacity onPress={() => openPicture(imageId)} style={styles.item}>
+    <TouchableOpacity onPress={openPicture} style={styles.item}>
       <FastImage
         resizeMode={FastImage.resizeMode.cover}
         style={imageStyle}
@@ -16,7 +16,7 @@ const ListItemM = ({imageUrl, imageId, openPicture, imageStyle}) => {
 
 export const ListItem = React.memo(ListItemM);
 
-const styles: any = StyleSheet.create({
+const styles = StyleSheet.create({
   page: {
     flex: 1,
     alignItems: 'stretch',
@@ -34,12 +34,7 @@ const styles: any = StyleSheet.create({
     textAlign: 'center',
   },
   item: {
-    width: 200,
-    height: 200,
     backgroundColor: 'black',
-    paddingLeft: 5,
-    paddingRight: 5,
-    paddingTop: 5,
-    paddingBottom: 5,
+    padding: 2,
   },
 });
