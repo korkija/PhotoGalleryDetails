@@ -128,6 +128,7 @@ const styles = StyleSheet.create({
     padding: 30,
     alignItems: 'center',
   },
+
   errorText: {
     textAlign: 'center',
   },
