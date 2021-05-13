@@ -1,4 +1,7 @@
 import {getPictures, getPictureDetails} from '../../../api/api';
+import {actionErrorType} from '../reducers/authReducer';
+import {Dispatch} from 'redux';
+
 import {
   GET_PHOTOS,
   LOAD_MORE_PHOTOS,
@@ -6,15 +9,18 @@ import {
   LOAD_DETAILS_PHOTO,
   SET_ERROR,
 } from '../constants';
+import {pictureItem} from '~/redux/store/reducers/photoReducer';
 
-export const setError = (errorText) => {
+export const setError = (errorText: string): actionErrorType => {
   return {
     type: SET_ERROR,
     error: errorText,
   };
 };
 
-const setErrorAndLoading = (errorText) => (dispatch) => {
+const setErrorAndLoading = (errorText: string) => (
+  dispatch: Dispatch,
+): void => {
   dispatch({
     type: IS_LOADING,
     isLoading: false,
@@ -22,7 +28,7 @@ const setErrorAndLoading = (errorText) => (dispatch) => {
   dispatch(setError(errorText));
 };
 
-export const getPhotosThunk = () => async (dispatch) => {
+export const getPhotosThunk = () => async (dispatch: Dispatch<any>) => {
   try {
     dispatch({
       type: IS_LOADING,
@@ -36,7 +42,7 @@ export const getPhotosThunk = () => async (dispatch) => {
         page: response.data.page,
         pageCount: response.data.pageCount,
       });
-    } else {
+    } else if (response.error) {
       dispatch(setErrorAndLoading(response.error.message));
     }
   } catch (e) {
@@ -44,7 +50,9 @@ export const getPhotosThunk = () => async (dispatch) => {
   }
 };
 
-export const loadMoreUsersThunk = (page) => async (dispatch) => {
+export const loadMoreUsersThunk = (page: number) => async (
+  dispatch: Dispatch<any>,
+) => {
   try {
     dispatch({
       type: IS_LOADING,
@@ -58,7 +66,7 @@ export const loadMoreUsersThunk = (page) => async (dispatch) => {
         page: response.data.page,
         pageCount: response.data.pageCount,
       });
-    } else {
+    } else if (response.error) {
       dispatch(setErrorAndLoading(response.error.message));
     }
   } catch (e) {
@@ -66,11 +74,14 @@ export const loadMoreUsersThunk = (page) => async (dispatch) => {
   }
 };
 
-export const getPhotoDetailsThunk = (id) => async (dispatch, getState) => {
+export const getPhotoDetailsThunk = (id: number) => async (
+  dispatch: Dispatch,
+  getState: Function,
+) => {
   try {
     const {pictures, picturesDetails} = getState().photoAPI;
-    const index = pictures.findIndex((item) => {
-      return item.id === id;
+    const index = pictures.findIndex((item: pictureItem) => {
+      return item.id === id.toString();
     });
     if (!picturesDetails[index].details) {
       const response = await getPictureDetails(id);
@@ -80,7 +91,7 @@ export const getPhotoDetailsThunk = (id) => async (dispatch, getState) => {
           indexPhoto: index,
           details: response.data,
         });
-      } else {
+      } else if (response.error) {
         dispatch(setError(response.error?.message));
       }
     }

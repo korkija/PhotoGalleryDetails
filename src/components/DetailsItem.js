@@ -7,7 +7,7 @@ import {ImageWithPreview} from './ImageWithPreview';
 
 const {width, height} = Dimensions.get('window');
 
-const DetailsItemM = ({indexPhoto, onShare}) => {
+const DetailsItemM = ({indexPhoto, onShare, safeArea}) => {
   const picturesDetails = useSelector(
     (state) => state.photoAPI.picturesDetails,
   );
@@ -21,9 +21,12 @@ const DetailsItemM = ({indexPhoto, onShare}) => {
   }, [picturesDetails]);
 
   const scaleValue = useRef(1);
+
+  console.log('safeArea.bottom', safeArea.bottom);
   return (
-    <View style={styles.imageContainer}>
+    <View style={[styles.imageContainer]}>
       <ImageZoom
+        style={{paddingBottom: safeArea.top + 40}}
         cropWidth={width - 10}
         cropHeight={height}
         imageWidth={width - 10}
@@ -44,6 +47,7 @@ const DetailsItemM = ({indexPhoto, onShare}) => {
       </ImageZoom>
       <DetailsFooter
         details={photoItem.details}
+        paddingBottom= {safeArea.bottom}
         shareCallback={() =>
           onShare({
             cropp: photoItem.cropped_picture,

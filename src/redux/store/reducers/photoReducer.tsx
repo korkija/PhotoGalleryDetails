@@ -6,7 +6,33 @@ import {
   LOAD_DETAILS_PHOTO,
 } from '../constants';
 
-const initialState = {
+export type pictureItem = {
+  id: string;
+  cropped_picture: string;
+};
+type detailsType = {
+  id: string;
+  author: string;
+  camera: string;
+  tags: string;
+  full_picture: string;
+  cropped_picture: string;
+};
+type pictureDetailsItem = {
+  id: string;
+  cropped_picture: string;
+  details?: detailsType;
+};
+
+type stateType = {
+  pictures: [pictureItem] | [];
+  picturesDetails: [pictureDetailsItem] | [];
+  page: number;
+  pageCount: number | null;
+  isLoading: boolean;
+};
+
+const initialState: stateType = {
   pictures: [],
   picturesDetails: [],
   page: 1,
@@ -14,7 +40,31 @@ const initialState = {
   isLoading: false,
 };
 
-export const photoReducer = (state = initialState, action) => {
+export type actionTokenType = {
+  type: typeof LOAD_MORE_PHOTOS | typeof GET_PHOTOS;
+  pictures: string;
+  page: number;
+  pageCount: number;
+};
+export type actionLoadingType = {
+  type: typeof IS_LOADING;
+  isLoading: boolean;
+};
+export type actionDetailsPhotoType = {
+  type: typeof LOAD_DETAILS_PHOTO;
+  indexPhoto: number;
+  details: detailsType;
+};
+
+type actionsPhotoType =
+  | actionTokenType
+  | actionLoadingType
+  | actionDetailsPhotoType;
+
+export const photoReducer = (
+  state = initialState,
+  action: actionsPhotoType,
+) => {
   switch (action.type) {
     case GET_PHOTOS:
       return {
