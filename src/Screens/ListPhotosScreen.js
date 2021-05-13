@@ -125,7 +125,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
   },
   errorContainer: {
-    padding: 30,
+    padding: 31,
+    // padding: 30,
     alignItems: 'center',
   },
 
