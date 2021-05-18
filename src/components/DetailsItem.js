@@ -4,13 +4,15 @@ import ImageZoom from 'react-native-image-pan-zoom';
 import {useSelector} from 'react-redux';
 import {DetailsFooter} from './DetailsFooter';
 import {ImageWithPreview} from './ImageWithPreview';
+import {getPicturesDetailsSelector} from '../redux/store/selectors';
 
 const {width, height} = Dimensions.get('window');
 
 const DetailsItemM = ({indexPhoto, onShare, safeArea}) => {
-  const picturesDetails = useSelector(
-    (state) => state.photoAPI.picturesDetails,
-  );
+  const picturesDetails = useSelector(getPicturesDetailsSelector);
+  // const picturesDetails = useSelector(
+  //   (state) => state.photoAPI.picturesDetails,
+  // );
   const [photoItem, setPhotoItem] = useState(picturesDetails[indexPhoto]);
 
   useEffect(() => {

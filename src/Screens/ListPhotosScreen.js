@@ -1,5 +1,12 @@
 import React, {useEffect, useState, useRef, useCallback} from 'react';
-import {FlatList, Dimensions, StyleSheet, View, StatusBar} from 'react-native';
+import {
+  FlatList,
+  Dimensions,
+  StyleSheet,
+  View,
+  StatusBar,
+  Text,
+} from 'react-native';
 
 import {useDispatch, useSelector} from 'react-redux';
 
@@ -12,13 +19,30 @@ import {getToken} from '../redux/store/actions/authActions';
 import {SafeAreaView} from 'react-navigation';
 import {keyExtractor} from './helpers/index';
 import {ErrorBlock} from '../components/ErrorBlock';
+import {EmptyComponent} from '../components/EmptyComponent';
+import {
+  getPageSelector,
+  getPageCountSelector,
+  getPicturesSelector,
+  getIsLoadingSelector,
+  getTokenSelector,
+  getErrorSelector,
+} from '../redux/store/selectors';
 
 const {height, width} = Dimensions.get('window');
 
 export const ListPhotosScreen = ({navigation}) => {
   const dispatch = useDispatch();
-  const {page, pictures, pageCount} = useSelector((state) => state.photoAPI);
-  const {token, error: errorToken} = useSelector((state) => state.authAPI);
+  const page = useSelector(getPageSelector);
+  const pageCount = useSelector(getPageCountSelector);
+  const pictures = useSelector(getPicturesSelector);
+  const isLoading = useSelector(getIsLoadingSelector);
+  const token = useSelector(getTokenSelector);
+  const errorToken = useSelector(getErrorSelector);
+  // const {page, pictures, pageCount, isLoading} = useSelector(
+  //   (state) => state.photoAPI,
+  // );
+  // const {token, error: errorToken} = useSelector((state) => state.authAPI);
 
   const loadNewData = useRef(true);
   const [
@@ -94,6 +118,8 @@ export const ListPhotosScreen = ({navigation}) => {
     await dispatch(getPhotosThunk());
   }, []);
 
+  console.log('isLoading', isLoading);
+
   return (
     <View style={styles.page}>
       <StatusBar backgroundColor="#000" barStyle="light-content" />
@@ -111,6 +137,7 @@ export const ListPhotosScreen = ({navigation}) => {
           renderItem={renderPicture}
           keyExtractor={keyExtractor}
           onEndThreshold={4}
+          ListEmptyComponent={<EmptyComponent isLoading={isLoading} />}
         />
       </SafeAreaView>
       {!!errorToken && <ErrorBlock errorMessage={errorToken} />}

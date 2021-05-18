@@ -6,6 +6,7 @@ import {getPhotoDetailsThunk} from '../redux/store/actions/photoActions';
 import {keyExtractor} from './helpers/index';
 import {DetailsItem} from '../components/DetailsItem';
 import {ErrorBlock} from '../components/ErrorBlock';
+import {getPicturesSelector, getErrorSelector} from '../redux/store/selectors';
 
 const {width} = Dimensions.get('window');
 
@@ -13,8 +14,10 @@ const DetailsPhotoScreenM = ({route}) => {
   const {indexPhoto} = route.params;
   const insets = useSafeAreaInsets();
   const dispatch = useDispatch();
-  const {error: errorToken} = useSelector((state) => state.authAPI);
-  const pictures = useSelector((state) => state.photoAPI.pictures);
+  // const {error: errorToken} = useSelector((state) => state.authAPI);
+  // const pictures = useSelector((state) => state.photoAPI.pictures);
+  const errorToken = useSelector(getErrorSelector);
+  const pictures = useSelector(getPicturesSelector);
 
   const onShare = async ({cropp, full}) => {
     try {
